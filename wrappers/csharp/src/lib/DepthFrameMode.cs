@@ -25,66 +25,53 @@
  */
 
 using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace freenect
 {
 	/// <summary>
-	/// Delegate for Kinect.Log event
+	/// Depth frame mode.
 	/// </summary>
-	public delegate void LogEventHandler(object sender, LogEventArgs e);
-	
-	/// <summary>
-	/// Log event data
-	/// </summary>
-	///
-	/// 
-	public class LogEventArgs
+	public class DepthFrameMode : FrameMode
 	{
 		/// <summary>
-		/// Gets the Kinect device this log item originated from
+		/// Gets the format for this depth frame mode
 		/// </summary>
-		public Kinect Device
+		public DepthFormat Format
 		{
-			get;
-			set;
+			get
+			{
+				return this.depthFormat;	
+			}
 		}
 		
 		/// <summary>
-		/// Gets the timestamp for this log item. This is done on the C# 
-		/// side and does not mean it was SENT EXACTLY at the specified 
-		/// time from the Kinect low level library.
+		/// Ninja constructor
 		/// </summary>
-		public DateTime Timestamp
+		internal DepthFrameMode()
 		{
-			get;
-			private set;
+			
 		}
 		
 		/// <summary>
-		/// Gets the logging level the library it set to
+		/// Finds a mode, given a format and resolution.
 		/// </summary>
-		public LoggingLevel LogLevel
+		/// <param name="format">
+		/// Depth format for the mode
+		/// </param>
+		/// <param name="resolution">
+		/// Resolution for the mode
+		/// </param>
+		/// <returns>
+		/// Mode with the format/resolution combo. Null if the combination is invalid.
+		/// </returns>
+		public static DepthFrameMode Find(DepthFormat format, Resolution resolution)
 		{
-			get;
-			private set;
-		}
-		
-		/// <summary>
-		/// Gets the log item text
-		/// </summary>
-		public string Message
-		{
-			get;
-			private set;
-		}
-		
-		public LogEventArgs(Kinect device, LoggingLevel logLevel, string message)
-		{
-			this.Device = device;
-			this.LogLevel = logLevel;
-			this.Message = message;
+			return (DepthFrameMode)FrameMode.FromInterop(KinectNative.freenect_find_depth_mode(resolution, format), FrameMode.FrameModeType.DepthFormat);
 		}
 		
 	}
 }
-

@@ -25,66 +25,53 @@
  */
 
 using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace freenect
 {
 	/// <summary>
-	/// Delegate for Kinect.Log event
+	/// Depth frame mode.
 	/// </summary>
-	public delegate void LogEventHandler(object sender, LogEventArgs e);
-	
-	/// <summary>
-	/// Log event data
-	/// </summary>
-	///
-	/// 
-	public class LogEventArgs
+	public class VideoFrameMode : FrameMode
 	{
-		/// <summary>
-		/// Gets the Kinect device this log item originated from
-		/// </summary>
-		public Kinect Device
-		{
-			get;
-			set;
-		}
 		
 		/// <summary>
-		/// Gets the timestamp for this log item. This is done on the C# 
-		/// side and does not mean it was SENT EXACTLY at the specified 
-		/// time from the Kinect low level library.
+		/// Gets the format for this video frame mode
 		/// </summary>
-		public DateTime Timestamp
+		public VideoFormat Format
 		{
-			get;
-			private set;
+			get
+			{
+				return this.videoFormat;	
+			}
 		}
 		
 		/// <summary>
-		/// Gets the logging level the library it set to
+		/// Ninja constructor
 		/// </summary>
-		public LoggingLevel LogLevel
+		internal VideoFrameMode()
 		{
-			get;
-			private set;
+			
 		}
 		
 		/// <summary>
-		/// Gets the log item text
+		/// Finds a mode, given a format and resolution.
 		/// </summary>
-		public string Message
+		/// <param name="format">
+		/// Video format for the mode
+		/// </param>
+		/// <param name="resolution">
+		/// Resolution for the mode
+		/// </param>
+		/// <returns>
+		/// Mode with the format/resolution combo. Null if the combination is invalid.
+		/// </returns>
+		public static VideoFrameMode Find(VideoFormat format, Resolution resolution)
 		{
-			get;
-			private set;
+			return (VideoFrameMode)FrameMode.FromInterop(KinectNative.freenect_find_video_mode(resolution, format), FrameMode.FrameModeType.VideoFormat);
 		}
-		
-		public LogEventArgs(Kinect device, LoggingLevel logLevel, string message)
-		{
-			this.Device = device;
-			this.LogLevel = logLevel;
-			this.Message = message;
-		}
-		
 	}
 }
-

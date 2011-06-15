@@ -23,68 +23,47 @@
  * Binary distributions must follow the binary distribution requirements of
  * either License.
  */
-
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using freenect;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System.Drawing;
 
-namespace freenect
+namespace KinectDemo
 {
 	/// <summary>
-	/// Delegate for Kinect.Log event
+	/// Displays video / depth data
 	/// </summary>
-	public delegate void LogEventHandler(object sender, LogEventArgs e);
-	
-	/// <summary>
-	/// Log event data
-	/// </summary>
-	///
-	/// 
-	public class LogEventArgs
+	public partial class PreviewControl : UserControl
 	{
-		/// <summary>
-		/// Gets the Kinect device this log item originated from
-		/// </summary>
-		public Kinect Device
-		{
-			get;
-			set;
-		}
 		
 		/// <summary>
-		/// Gets the timestamp for this log item. This is done on the C# 
-		/// side and does not mean it was SENT EXACTLY at the specified 
-		/// time from the Kinect low level library.
+		/// Initialize UI components
 		/// </summary>
-		public DateTime Timestamp
+		public void InitializeComponents()
 		{
-			get;
-			private set;
+			///
+			/// renderPanel
+			/// 
+			this.renderPanel = new OpenTK.GLControl();
+			this.renderPanel.Dock = DockStyle.Fill;
+			this.renderPanel.Load += HandleRenderPanelLoad;
+			this.renderPanel.Paint += HandleRenderPanelPaint;
+			
+			///
+			/// PreviewWindow
+			/// 
+			this.BackColor = Color.Blue;
+			this.Controls.Add(this.renderPanel);
 		}
 		
-		/// <summary>
-		/// Gets the logging level the library it set to
-		/// </summary>
-		public LoggingLevel LogLevel
-		{
-			get;
-			private set;
-		}
-		
-		/// <summary>
-		/// Gets the log item text
-		/// </summary>
-		public string Message
-		{
-			get;
-			private set;
-		}
-		
-		public LogEventArgs(Kinect device, LoggingLevel logLevel, string message)
-		{
-			this.Device = device;
-			this.LogLevel = logLevel;
-			this.Message = message;
-		}
+		///
+		/// UI Components
+		/// 
+		protected OpenTK.GLControl renderPanel;
 		
 	}
 }
-
